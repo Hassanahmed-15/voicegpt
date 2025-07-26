@@ -1,0 +1,37 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+*.log
+# Virtual environments
+venv/
+env/
+.venv/
+# Model and binary files
+*.bin
+*.h5
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.npy
+*.npz
+*.dll
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+# System files
+.DS_Store
+Thumbs.db
+# Audio and large media files
+*.mp3
+*.wav
+*.mp4
+# Other
+*.swp
+*.swo
+*.bak
+*.tmp
