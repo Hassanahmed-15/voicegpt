@@ -1,0 +1,904 @@
+<!-- html_code = """ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hassan AI | Advanced Voice Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      /* Dark Theme Default */
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-tertiary: #2d2d2d;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent-primary: #7c4dff;
+      --accent-secondary: #651fff;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --error: #f44336;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #e0e0e0;
+      --text-primary: #212121;
+      --text-secondary: #757575;
+      --accent-primary: #6200ea;
+      --accent-secondary: #3700b3;
+      --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: var(--transition);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Styles */
+    header {
+      background-color: var(--bg-secondary);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-icon {
+      font-size: 2rem;
+      color: var(--accent-primary);
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .theme-toggle {
+      background: var(--bg-tertiary);
+      border: none;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(30deg);
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Dashboard Grid */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Control Panel */
+    .control-panel {
+      background-color: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .panel-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .control-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-secondary);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-tertiary);
+      filter: brightness(1.2);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Audio Visualizer */
+    .visualizer {
+      height: 100px;
+      background-color: var(--bg-tertiary);
+      border-radius: var(--border-radius);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .visualizer-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 100%;
+      padding: 0 1rem;
+    }
+
+    .bar {
+      background: linear-gradient(to top, var(--accent-primary), var(--accent-secondary));
+      width: 8px;
+      border-radius: 4px;
+      transition: height 0.1s ease;
+    }
+
+    /* Chat Interface */
+    .chat-interface {
+      background-color: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+    }
+
+    .chat-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--bg-tertiary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .chat-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-log {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      position: relative;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background-color: var(--accent-primary);
+      color: white;
+      border-bottom-right-radius: 0;
+    }
+
+    .assistant-message {
+      align-self: flex-start;
+      background-color: var(--bg-tertiary);
+      border-bottom-left-radius: 0;
+    }
+
+    .message-time {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 0.5rem;
+      display: block;
+    }
+
+    .message-actions {
+      position: absolute;
+      top: -12px;
+      right: 10px;
+      background: var(--bg-secondary);
+      border-radius: 20px;
+      padding: 0.25rem 0.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .message:hover .message-actions {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    .action-btn:hover {
+      color: var(--accent-primary);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--bg-tertiary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--success);
+    }
+
+    .indicator-dot.recording {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    /* Audio Player */
+    .audio-player {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    audio {
+      width: 100%;
+      border-radius: var(--border-radius);
+    }
+
+    /* Settings Panel */
+    .settings-panel {
+      background-color: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--box-shadow);
+      margin-top: 2rem;
+    }
+
+    .settings-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .settings-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .setting-label {
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .setting-control {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    select, input[type="range"] {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: var(--border-radius);
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--bg-secondary);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-link:hover {
+      color: var(--accent-primary);
+    }
+
+    /* Animations */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+      header {
+        padding: 1rem;
+      }
+      
+      main {
+        padding: 1rem;
+      }
+      
+      .control-panel, .chat-interface {
+        padding: 1rem;
+      }
+      
+      .btn {
+        padding: 0.5rem 1rem;
+      }
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .mt-4 { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <i class="fas fa-robot logo-icon floating"></i>
+      <span class="logo-text">Hassan AI</span>
+    </div>
+    <button class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
+
+  <main>
+    <div class="dashboard">
+      <div class="control-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Voice Controls</h2>
+          <div class="control-buttons">
+            <button class="btn btn-secondary" id="settingsBtn">
+              <i class="fas fa-cog"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="visualizer" id="visualizer">
+          <div class="visualizer-bars" id="visualizerBars">
+            <!-- Bars will be generated by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="control-buttons">
+          <button class="btn btn-primary" id="recordBtn">
+            <i class="fas fa-microphone"></i> Start Recording
+          </button>
+          <button class="btn btn-secondary" id="stopBtn" disabled>
+            <i class="fas fa-stop"></i> Stop
+          </button>
+        </div>
+        
+        <div class="audio-player">
+          <audio id="audioPlayer" controls></audio>
+        </div>
+        
+        <div class="status-indicator">
+          <div class="indicator-dot" id="statusDot"></div>
+          <span id="statusText">Ready to connect</span>
+        </div>
+      </div>
+      
+      <div class="chat-interface">
+        <div class="chat-header">
+          <h2 class="chat-title">Conversation</h2>
+          <div class="chat-actions">
+            <button class="btn btn-secondary btn-sm" id="clearChatBtn">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="chat-log" id="chatLog">
+          <div class="message assistant-message">
+            Hello! I'm Hassan, your AI assistant. How can I help you today?
+            <span class="message-time">Just now</span>
+          </div>
+        </div>
+        
+        <div class="status-bar">
+          <div class="status-indicator">
+            <div class="indicator-dot"></div>
+            <span>System operational</span>
+          </div>
+          <div>
+            <span id="connectionStatus">Connected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="settings-panel hidden" id="settingsPanel">
+      <div class="settings-header">
+        <h2 class="settings-title">Settings</h2>
+      </div>
+      
+      <div class="settings-grid">
+        <div class="setting-group">
+          <label class="setting-label">Voice Model</label>
+          <select id="voiceModel">
+            <option value="gTTS">Google TTS (Default)</option>
+            <option value="openai">OpenAI TTS</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Speech Speed</label>
+          <div class="setting-control">
+            <input type="range" id="speechSpeed" min="0.5" max="2" step="0.1" value="1">
+            <span id="speedValue">1x</span>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Theme</label>
+          <select id="themeSelect">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="system">System Default</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="mt-3 text-center">
+        <button class="btn btn-primary" id="saveSettingsBtn">
+          <i class="fas fa-save"></i> Save Settings
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Hassan AI Voice Assistant - Powered by Whisper & GPT-4</p>
+    <div class="footer-links">
+      <a href="#" class="footer-link">Privacy Policy</a>
+      <a href="#" class="footer-link">Terms of Service</a>
+      <a href="#" class="footer-link">Documentation</a>
+      <a href="#" class="footer-link">GitHub</a>
+    </div>
+  </footer>
+
+  <script>
+    // DOM Elements
+    const recordBtn = document.getElementById('recordBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const chatLog = document.getElementById('chatLog');
+    const themeToggle = document.getElementById('themeToggle');
+    const themeSelect = document.getElementById('themeSelect');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    const clearChatBtn = document.getElementById('clearChatBtn');
+    const statusText = document.getElementById('statusText');
+    const statusDot = document.getElementById('statusDot');
+    const visualizerBars = document.getElementById('visualizerBars');
+    
+    // Audio Context for Visualizer
+    let audioContext;
+    let analyser;
+    let microphone;
+    let dataArray;
+    let mediaRecorder;
+    let audioChunks = [];
+    let stream;
+    let animationId;
+    
+    // Create visualizer bars
+    for (let i = 0; i < 20; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.height = '2px';
+      visualizerBars.appendChild(bar);
+    }
+    const bars = document.querySelectorAll('.bar');
+    
+    // Theme Management
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      updateThemeIcon(theme);
+    }
+    
+    function updateThemeIcon(theme) {
+      const icon = themeToggle.querySelector('i');
+      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme);
+    }
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+    themeSelect.value = savedTheme;
+    
+    // Event Listeners
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    themeSelect.addEventListener('change', (e) => {
+      setTheme(e.target.value);
+    });
+    
+    settingsBtn.addEventListener('click', () => {
+      settingsPanel.classList.toggle('hidden');
+    });
+    
+    saveSettingsBtn.addEventListener('click', () => {
+      localStorage.setItem('voiceModel', document.getElementById('voiceModel').value);
+      localStorage.setItem('speechSpeed', document.getElementById('speechSpeed').value);
+      localStorage.setItem('theme', document.getElementById('themeSelect').value);
+      settingsPanel.classList.add('hidden');
+      showToast('Settings saved successfully');
+    });
+    
+    clearChatBtn.addEventListener('click', () => {
+      chatLog.innerHTML = `
+        <div class="message assistant-message">
+          Conversation cleared. How can I help you now?
+          <span class="message-time">Just now</span>
+        </div>
+      `;
+    });
+    
+    // Speech Speed Control
+    const speechSpeed = document.getElementById('speechSpeed');
+    const speedValue = document.getElementById('speedValue');
+    
+    speechSpeed.addEventListener('input', () => {
+      speedValue.textContent = `${speechSpeed.value}x`;
+    });
+    
+    // Load saved settings
+    if (localStorage.getItem('voiceModel')) {
+      document.getElementById('voiceModel').value = localStorage.getItem('voiceModel');
+    }
+    
+    if (localStorage.getItem('speechSpeed')) {
+      speechSpeed.value = localStorage.getItem('speechSpeed');
+      speedValue.textContent = `${speechSpeed.value}x`;
+    }
+    
+    // Audio Visualization
+    function updateVisualizer() {
+      animationId = requestAnimationFrame(updateVisualizer);
+      
+      if (!analyser) return;
+      
+      analyser.getByteFrequencyData(dataArray);
+      
+      for (let i = 0; i < bars.length; i++) {
+        const value = dataArray[i] / 255;
+        const height = value * 100;
+        bars[i].style.height = `${height}px`;
+        bars[i].style.opacity = 0.1 + value * 0.9;
+      }
+    }
+    
+    // Recording Functions
+    recordBtn.addEventListener('click', async () => {
+      try {
+        recordBtn.disabled = true;
+        stopBtn.disabled = false;
+        statusText.textContent = 'Initializing microphone...';
+        statusDot.classList.add('recording');
+        
+        // Initialize audio context if not already done
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 64;
+          const bufferLength = analyser.frequencyBinCount;
+          dataArray = new Uint8Array(bufferLength);
+        }
+        
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        
+        // Connect microphone to analyzer for visualization
+        microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        updateVisualizer();
+        
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        
+        mediaRecorder.onstop = async () => {
+          cancelAnimationFrame(animationId);
+          statusText.textContent = 'Processing your request...';
+          
+          stream.getTracks().forEach(track => track.stop());
+          
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          if (audioBlob.size === 0) {
+            showToast('Recording was empty', 'error');
+            resetRecordingState();
+            return;
+          }
+          
+          const formData = new FormData();
+          formData.append("file", audioBlob, "recording.webm");
+          
+          try {
+            // Add user message to chat
+            addMessage('Processing voice command...', 'user');
+            
+            const response = await fetch("/chat", {
+              method: "POST",
+              body: formData
+            });
+            
+            const data = await response.json();
+            if (!response.ok) throw data;
+            
+            // Update chat with actual transcription and response
+            chatLog.lastChild.remove();
+            addMessage(data.transcription, 'user');
+            addMessage(data.reply, 'assistant');
+            
+            audioPlayer.src = data.audio_url + "?" + Date.now();
+            audioPlayer.play();
+            
+            statusText.textContent = 'Response received';
+            statusDot.classList.remove('recording');
+            statusDot.style.backgroundColor = 'var(--success)';
+            
+            setTimeout(() => {
+              statusText.textContent = 'Ready for next command';
+              statusDot.style.backgroundColor = '';
+            }, 3000);
+            
+          } catch (err) {
+            console.error('Error:', err);
+            showToast('Error processing request', 'error');
+            statusText.textContent = 'Error occurred';
+            statusDot.style.backgroundColor = 'var(--error)';
+            statusDot.classList.remove('recording');
+          } finally {
+            resetRecordingState();
+          }
+        };
+        
+        mediaRecorder.start();
+        statusText.textContent = 'Listening...';
+        
+        // Auto-stop after 10 seconds
+        setTimeout(() => {
+          if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+          }
+        }, 10000);
+        
+      } catch (err) {
+        console.error('Recording error:', err);
+        showToast('Microphone access denied', 'error');
+        statusText.textContent = 'Microphone error';
+        statusDot.style.backgroundColor = 'var(--error)';
+        resetRecordingState();
+      }
+    });
+    
+    stopBtn.addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        statusText.textContent = 'Processing...';
+      }
+    });
+    
+    function resetRecordingState() {
+      recordBtn.disabled = false;
+      stopBtn.disabled = true;
+      
+      // Reset visualizer bars
+      bars.forEach(bar => {
+        bar.style.height = '2px';
+        bar.style.opacity = '0.3';
+      });
+    }
+    
+    // Helper Functions
+    function addMessage(text, sender) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${sender}-message`;
+      
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      messageDiv.innerHTML = `
+        ${text}
+        <span class="message-time">${time}</span>
+        <div class="message-actions">
+          <button class="action-btn" title="Copy">
+            <i class="fas fa-copy"></i>
+          </button>
+          <button class="action-btn" title="Share">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+      `;
+      
+      chatLog.appendChild(messageDiv);
+      chatLog.scrollTop = chatLog.scrollHeight;
+      
+      // Add click handlers for action buttons
+      messageDiv.querySelector('.fa-copy').addEventListener('click', () => {
+        navigator.clipboard.writeText(text);
+        showToast('Copied to clipboard');
+      });
+    }
+    
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Add any initialization code here
+    });
+  </script>
+</body>
+</html>
+
+<!-- 
+output_path = Path("/mnt/data/index.html")
+output_path.write_text(html_code.strip())
+output_path.name -->
