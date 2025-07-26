@@ -41,6 +41,7 @@ git clone https://github.com/yourusername/voicegpt.git
 cd voicegpt
 ```
 
+
 ### 2. Install Dependencies
 Make sure you have Python 3.9+ installed, then:
 ```bash
@@ -90,16 +91,3 @@ I wanted something that feels like a conversation with me — not just text on a
 - Using FastAPI for fast and clean backend architecture.
 - Handling audio in Python and optimizing STT with Faster Whisper.
 
----
-
-## 📜 License
-Feel free to use and modify this project for your experiments. A little credit would be appreciated!
-
----
-
-## 🙌 Acknowledgements
-- [OpenAI](https://openai.com/) for ChatGPT.
-- [Eleven Labs](https://elevenlabs.io/) for amazing voice cloning tech.
-- [Faster Whisper](https://github.com/guillaumekln/faster-whisper) for STT.
-
----
